@@ -1,12 +1,11 @@
 package app;
 
-
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-
 import java.io.IOException;
 import java.net.URI;
+import java.util.Optional;
 
 public class HttpGetRequest {
 
@@ -18,9 +17,15 @@ public class HttpGetRequest {
         responseHandler = new StringResponseHandler();
     }
 
-    public String getRequest() throws IOException {
+    public Optional<String> getRequest()  {
 
-        CloseableHttpClient httpclient = HttpClients.createDefault();
-        return httpclient.execute(httpget, responseHandler);
+        String response = null;
+        try (CloseableHttpClient httpclient = HttpClients.createDefault()){
+            String respnse = httpclient.execute(httpget, responseHandler);
+            return Optional.of(respnse);
+        }catch (IOException e){
+            System.err.println(e.getMessage());
+            return Optional.ofNullable(response);
+        }
     }
 }
